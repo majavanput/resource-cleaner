@@ -50,6 +50,7 @@ stages:
               echo "The Resource IDs:"
               echo "$resource_ids"
 
+              # Reads the input ($resource_ids) one line at a time into the variable id, preserving spaces and special characters.
               while IFS= read -r id; do
                   az resource delete --ids "$id"
               done <<< "$resource_ids"
