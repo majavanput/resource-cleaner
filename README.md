@@ -1,5 +1,5 @@
-# resource-cleaner
-Delete **ALL** resources in Azure in **ALL** resource groups to save costs
+# Resource Cleaner
+Delete **ALL** resources in Azure in **ALL** resource groups to save costs.
 
 # Setup with GitHub
 When the repository is in Github, you need to do the following to make it working. The pipeline will run in Azure DevOps.
