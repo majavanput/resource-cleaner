@@ -50,7 +50,9 @@ stages:
               echo "The Resource IDs:"
               echo "$resource_ids"
 
-              echo "$resource_ids" | xargs -n 1 az resource delete --ids
+              while IFS= read -r id; do
+                  az resource delete --ids "$id"
+              done <<< "$resource_ids"
             fi
           done
       displayName: 'Delete all resources in the resource groups'
