@@ -38,9 +38,9 @@ stages:
 
             # Check if the list is empty
             if [ -z "$resource_ids" ]; then
-              printf "No resources found in the resource group $rg. Nothing to delete."
+              printf "No resources found in the resource group $rg. Nothing to delete.\n"
             else
-              printf "Delete resources in resource group $rg with resource IDs:\n$resource_ids"
+              printf "Delete resources in resource group $rg with resource IDs:\n$resource_ids\n"
 
               # Reads the input ($resource_ids) one line at a time into the variable id, preserving spaces and special characters.
               while IFS= read -r id; do
