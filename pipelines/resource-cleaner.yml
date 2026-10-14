@@ -12,15 +12,11 @@ schedules:
 pool:
   vmImage: ubuntu-latest
 
-parameters:
-- name: excludedResourceGroups
-  type: object
-  default:
-    - 'cloud-shell-storage-westeurope'
-
 variables:
   - name: AZURE_SERVICE_CONNECTION
     value: 'service-connection'
+  - name: EXCLUDED_RESOURCE_GROUP
+    value: 'cloud-shell-storage-westeurope'
 
 stages:
 - stage: DeleteResourcesStage
@@ -35,18 +31,14 @@ stages:
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         inlineScript: |
-          # Convert the excluded resource groups to JSON
-          excluded=${{ parameters.excludedResourceGroups }}
-
-          echo "Yeah..."
-          echo "$excluded"
-
           # List all resource groups and remove the exluded ones
-          if [ -n "$excluded" ]; then
-            resource_groups=$(az group list --query "[].name" -o tsv | grep -vE "^($excluded)$")
-          else
-            resource_groups=$(az group list --query "[].name" -o tsv)
-          fi
+          resource_groups=$(az group list --query "[].name" -o tsv)
+
+          ${resource_groups[@]/$(EXCLUDED_RESOURCE_GROUP)}            
+
+          echo "Yaha"
+          echo "$resource_groups"
+          echo "Ura"
 
           for rg in $resource_groups; do
             echo "Delete resources in resource group $rg"
