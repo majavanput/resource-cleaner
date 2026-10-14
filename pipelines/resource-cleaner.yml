@@ -36,10 +36,6 @@ stages:
 
           ${resource_groups[@]/$(EXCLUDED_RESOURCE_GROUP)}            
 
-          echo "Yaha"
-          echo "$resource_groups"
-          echo "Ura"
-
           for rg in $resource_groups; do
             echo "Delete resources in resource group $rg"
 
@@ -51,6 +47,9 @@ stages:
               echo "No resources found in the resource group. Nothing to delete."
             else
               # Delete each resource by its ID
+              echo "The Resource IDs:"
+              echo "$resource_ids"
+
               echo "$resource_ids" | xargs -n 1 az resource delete --ids
             fi
           done
