@@ -1,4 +1,5 @@
-# This pipeline deletes all resources in given resource group every 24 hours. This is to prevent high Azure costs.
+# This pipeline deletes ALL resources in ALL resource groups every 24 hours. This is to prevent high Azure costs.
+name: Cleanup-Resources-$(Date:yyyyMMdd)
 
 schedules:
 - cron: "*/10 0 * * *"
@@ -10,12 +11,6 @@ schedules:
 
 pool:
   vmImage: ubuntu-latest
-
-parameters:
-- name: excludedResourceGroups
-  type: object
-  default:
-    - 'cloud-shell-storage-westeurope'
 
 variables:
   - name: AZURE_SERVICE_CONNECTION
@@ -34,28 +29,23 @@ stages:
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         inlineScript: |
-          # Convert the excluded resource groups to JSON
-          excluded='${{ join(parameters.excludedResourceGroups, "|") }}'
-
           # List all resource groups and remove the exluded ones
-          if [ -n "$excluded" ]; then
-            resource_groups=$(az group list --query "[].name" -o tsv | grep -vE "^($excluded)$")
-          else
-            resource_groups=$(az group list --query "[].name" -o tsv)
-          fi
+          resource_groups=$(az group list --query "[].name" -o tsv)        
 
           for rg in $resource_groups; do
-            echo "Delete resources in resource group $rg"
-
             # List all resource IDs in the resource group
             resource_ids=$(az resource list --resource-group "$rg" --query "[].id" --output tsv)
 
             # Check if the list is empty
             if [ -z "$resource_ids" ]; then
-              echo "No resources found in the resource group. Nothing to delete."
+              printf "No resources found in the resource group $rg. Nothing to delete.\n"
             else
-              # Delete each resource by its ID
-              echo "$resource_ids" | xargs -n 1 az resource delete --ids
+              printf "Delete resources in resource group $rg with resource IDs:\n$resource_ids\n"
+
+              # Reads the input ($resource_ids) one line at a time into the variable id, preserving spaces and special characters.
+              while IFS= read -r id; do
+                  az resource delete --ids "$id"
+              done <<< "$resource_ids"
             fi
           done
       displayName: 'Delete all resources in the resource groups'
