@@ -1,4 +1,4 @@
-# This pipeline deletes all resources in given resource group every 24 hours. This is to prevent high Azure costs.
+# This pipeline deletes ALL resources in ALL resource groups every 24 hours. This is to prevent high Azure costs.
 name: Cleanup-Resources-$(Date:yyyyMMdd)
 
 schedules:
