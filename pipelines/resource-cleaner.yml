@@ -28,4 +28,4 @@ stages:
       inputs:
         azureSubscription: '$(AZURE_SERVICE_CONNECTION)'
         scriptType: 'bash'
-        scriptPath: ../scripts/resource-cleaner.sh
+        scriptPath: ./scripts/resource-cleaner.sh
